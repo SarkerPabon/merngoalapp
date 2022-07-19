@@ -7,7 +7,7 @@ const User = require("../models/userModel");
 // @access Private
 
 const getGoals = asyncHandler(async (req, res) => {
-	const goals = await Goal.find({ user: req.user.id });
+	const goals = await Goal.find({ user: req.user._id });
 
 	res.status(200).json(goals);
 });
@@ -41,17 +41,21 @@ const updateGoal = asyncHandler(async (req, res) => {
 		res.status(400);
 		throw new Error("Goal Not Found");
 	}
+	// console.log("goal: ", goal);
 
-	const user = User.findById(req.user.id);
+	// const user = User.findById(req.user.id);
 
 	// Check User
-	if (!user) {
+	// if (!user) {
+	if (!req.user) {
 		res.status(401);
 		throw new Error("User Not Found");
 	}
+	// console.log("goalUser: ", req.user);
 
 	// Make sure the logged in user matches goal user
-	if (goal.user.toString() === user.id) {
+	// if (goal.user.toString() === user.id) {
+	if (goal.user.toString() === req.user._id) {
 		res.status(401);
 		throw new Error("User Not Authorized");
 	}
@@ -75,16 +79,18 @@ const deleteGoal = asyncHandler(async (req, res) => {
 		throw new Error("Goal Not Found");
 	}
 
-	const user = User.findById(req.user.id);
+	// const user = User.findById(req.user.id);
 
 	// Check User
-	if (!user) {
+	// if (!user) {
+	if (!req.user) {
 		res.status(401);
 		throw new Error("User Not Found");
 	}
 
 	// Make sure the logged in user matches goal user
-	if (goal.user.toString() === user.id) {
+	// if (goal.user.toString() === user.id) {
+	if (goal.user.toString() === req.user._id) {
 		res.status(401);
 		throw new Error("User Not Authorized");
 	}
